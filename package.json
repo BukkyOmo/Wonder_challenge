@@ -1,0 +1,31 @@
+{
+  "name": "wonder_challenge",
+  "version": "1.0.0",
+  "description": "Wonder challenge using Node, Express and postgres",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BukkyOmo/Wonder_challenge.git"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "postgres"
+  ],
+  "author": "Bukola Omosefunmi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BukkyOmo/Wonder_challenge/issues"
+  },
+  "homepage": "https://github.com/BukkyOmo/Wonder_challenge#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
