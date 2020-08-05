@@ -1,0 +1,12 @@
+{
+    "dev": {
+      "ENV": "DEVELOPMENT_DATABASE_URL"
+    },
+    "test": {
+      "ENV": "TEST_DATABASE_URL"
+    },
+    "prod": {
+      "ENV": "PRODUCTION_DATABASE_URL"
+    }
+  }
+  
