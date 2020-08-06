@@ -22,17 +22,16 @@ class MessageService {
     }
   }
 
-  static async updateMessage(params) {
+  static async updateProcessedMessage(params) {
     const { message_id } = params;
-    const status = 'processed';
     const query = {
-      text: messages.updateMessage,
-      values: [status, message_id],
+      text: messages.updateMessageToProcessed,
+      values: [message_id],
     };
     try {
       const { rows } = await db.query(query);
       if (rows) {
-        return successResponseFormat('Message processing.', 200, 'Success', rows[0]);
+        return successResponseFormat('Message processed successfully.', 200, 'Success', rows[0]);
       }
       return failureResponseFormat('Message failed to process.', 400, 'Failure');
     } catch (error) {
@@ -58,35 +57,44 @@ class MessageService {
   }
 
   static async getMessage(userQuery) {
+    const messageSize = userQuery.size || 1;
     const visibilityTimeout = userQuery.visibilityTimeout || 30;
     const query = {
       text: messages.getMessage,
-      values: ['unprocessed'],
+      values: ['unprocessed', messageSize],
     };
     const lockQuery = {
       text: messages.lockTableQuery,
     };
-  try {
-    const startPolling = (messageId) => {
-      setTimeout(async () => {
-        await db.query(messages.processedUpdateMessage, [messageId]);
-      }, visibilityTimeout * 1000);
-    };
-
     try {
+      const startPolling = (messageId) => {
+        setTimeout(async () => {
+          await db.query(messages.processedUpdateMessage, [messageId]);
+        }, visibilityTimeout * 1000);
+      };
+
+      try {
         await db.query('BEGIN');
         await db.query(lockQuery);
         const { rows } = await db.query(query);
-        const updateQuery = {
-          text: messages.updateMessage,
-          values: [rows[0].id],
-        };
-        await db.query(updateQuery);
+
+        // update status of all the messages polled to processing
+        for (const row of rows) {
+          await db.query({
+            text: messages.updateMessageToProcessing,
+            values: [row.id],
+          });
+        }
+
         await db.query('COMMIT');
-        startPolling(rows[0].id);
-        return successResponseFormat('Message fetched successfully', 200, 'Success', rows[0]);
+        // loop through the array of messages polled and pick the id of each while also calling the startPoll function on each item
+        const result = rows.map((elem) => {
+          startPolling(elem.id);
+          return elem.id;
+        });
+        return successResponseFormat('Message fetched successfully.', 200, 'Success', result);
       } catch (error) {
-          return failureResponseFormat('Database error occured', 400, 'Failure', error);
+        return failureResponseFormat('Database error occured', 400, 'Failure', error);
       }
     } catch (error) {
       return failureResponseFormat('Internal server error', 500, 'Failure', error);

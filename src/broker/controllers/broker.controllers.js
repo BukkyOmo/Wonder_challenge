@@ -10,9 +10,9 @@ class MessageController {
     }
   }
 
-  static async updateMessage(req, res) {
+  static async updateProcessedMessage(req, res) {
     try {
-      const result = await MessageService.updateMessage(req.params);
+      const result = await MessageService.updateProcessedMessage(req.params);
       return res.status(200).json(result);
     } catch (error) {
       return res.status(400).json(error);

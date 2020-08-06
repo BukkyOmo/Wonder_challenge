@@ -3,9 +3,9 @@ import MessageController from '../controllers/broker.controllers';
 
 const router = Router();
 
-router.post('/', MessageController.createMessage);
-router.patch('/:message_id', MessageController.updateMessage);
-router.get('/', MessageController.getMessage);
+router.post('/produce', MessageController.createMessage);
+router.patch('/:message_id', MessageController.updateProcessedMessage);
+router.get('/consume', MessageController.getMessage);
 router.delete('/:message_id', MessageController.deleteMessage);
 
 export default router;

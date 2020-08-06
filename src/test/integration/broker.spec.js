@@ -7,10 +7,10 @@ chai.should();
 
 describe('INTEGRATION TEST FOR BROKER CONTOLLER', () => {
   describe('/POST MESSAGE ROUTE', () => {
-    it('it should successfully add a message to the queue', (done) => {
+    it('it(producer) should successfully add a message to the queue', (done) => {
       chai
         .request(app)
-        .post('/api/v1/messages')
+        .post('/api/v1/messages/produce')
         .send({
           message: 'New message to queue',
         })
@@ -22,6 +22,18 @@ describe('INTEGRATION TEST FOR BROKER CONTOLLER', () => {
           done();
         });
     });
+    it('it(consumer) should successfully get a message from the queue', (done) => {
+        chai
+          .request(app)
+          .get('/api/v1/messages/consume')
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.body.should.have
+              .property('message')
+              .to.equals('Message fetched successfully.');
+            done();
+          });
+      });
     it('it should successfully update status of a message on the queue', (done) => {
       chai
         .request(app)
@@ -30,7 +42,7 @@ describe('INTEGRATION TEST FOR BROKER CONTOLLER', () => {
           res.should.have.status(200);
           res.body.should.have
             .property('message')
-            .to.equals('Message processing.');
+            .to.equals('Message processed successfully.');
           done();
         });
     });
