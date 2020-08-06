@@ -4,9 +4,11 @@
   "description": "Wonder challenge using Node, Express and postgres",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --require @babel/register 'src/**/**spec.js'",
+    "test": "NODE_ENV=test mocha --require @babel/register 'src/**/**spec.js'",
     "start": "nodemon --exec babel-node index.js",
-    "lint": "eslint --ext js ."
+    "lint": "eslint --ext js .",
+    "migrate:up": "db-migrate up --config database.json -e test",
+    "migrate:down": "db-migrate down -c 5 --config database.json -e test"
   },
   "repository": {
     "type": "git",
@@ -27,6 +29,7 @@
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.11.0",
     "@babel/node": "^7.10.5",
+    "@babel/plugin-transform-runtime": "^7.11.0",
     "@babel/preset-env": "^7.11.0",
     "@babel/register": "^7.10.5",
     "chai": "^4.2.0",
@@ -38,11 +41,14 @@
     "nodemon": "^2.0.4"
   },
   "dependencies": {
+    "@babel/preset-stage-0": "^7.8.3",
+    "@babel/runtime": "^7.11.2",
     "body-parser": "^1.19.0",
     "db-migrate-pg": "^1.2.2",
     "dotenv": "^8.2.0",
     "editorconfig": "^0.15.3",
     "express": "^4.17.1",
+    "node-cmd": "^3.0.0",
     "node-postgres": "^0.6.2",
     "pg": "^8.3.0"
   }
